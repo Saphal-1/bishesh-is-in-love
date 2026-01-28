@@ -19,7 +19,8 @@
         /* --- LOADING SCREEN --- */
         #loader {
             position: fixed;
-            height: 100vh; width: 100%;
+            height: 100vh; 
+            width: 100%;
             background: #fff;
             z-index: 9999;
             display: flex;
@@ -29,24 +30,18 @@
             transition: opacity 1s ease;
         }
 
-        .heart-container { position: relative; width: 100px; height: 100px; }
-        .main-heart { font-size: 80px; color: var(--primary); animation: beat 1s infinite; }
-        .arrow {
-            position: absolute;
-            font-size: 40px;
-            top: 20px; left: -100px;
-            animation: hit 2s forwards ease-in-out;
-        }
-
-        @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
-        @keyframes hit {
-            0% { transform: translateX(0) rotate(45deg); opacity: 1; }
-            50% { transform: translateX(120px) rotate(45deg); opacity: 1; }
-            100% { transform: translateX(120px) rotate(45deg); opacity: 0; }
+        .video-container {
+            position: relative;
+            width: 90%;
+            max-width: 500px;
+            aspect-ratio: 16 / 9; /* Standard video ratio */
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
         }
 
         .start-btn {
-            margin-top: 50px;
             padding: 15px 40px;
             background: var(--primary);
             color: white;
@@ -55,6 +50,7 @@
             font-size: 1.2rem;
             cursor: pointer;
             box-shadow: 0 4px 15px rgba(255, 77, 109, 0.4);
+            z-index: 10000;
         }
 
         /* --- RAINBOW HEART BACKGROUND --- */
@@ -104,6 +100,113 @@
         .marry-btn:hover { transform: scale(1.1); background: #ff758c; }
     </style>
 </head>
+<body>
+
+    <div id="loader">
+        <div class="video-container">
+            <iframe 
+                src="https://www.kapwing.com/e/697a39e51131cb041a0034fa" 
+                style="width: 100%; height: 100%; position: absolute; left: 0px; top: 0px; border: none;" 
+                allow="autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                allowfullscreen>
+            </iframe>
+        </div>
+        <button class="start-btn" onclick="startExperience()">Click to Open My Heart</button>
+    </div>
+
+    <div id="music-player" style="display:none">
+        <iframe id="youtube-audio" width="0" height="0" src="https://www.youtube.com/embed/7f31Izm9050?enablejsapi=1" frameborder="0"></iframe>
+    </div>
+
+    <canvas id="bg-canvas"></canvas>
+
+    <section class="section">
+        <h1>Happy Birthday, Mero Mutu</h1>
+        <p class="nepali-text">Aaja ko din timro nimti dherai dherai suvakamana.</p>
+        <p style="margin-top: 30px; font-style: italic;">Scroll down... I have a question for you.</p>
+    </section>
+
+    <section class="section">
+        <div class="propose-card">
+            <h2 style="font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--primary);">Ma Timilai Dherai Maya Garchu...</h2>
+            <p style="margin: 20px 0; line-height: 1.6;">
+                Every moment with you feels like a dream. On your birthday, I want to give you a promise that lasts forever.
+            </p>
+            <h1 style="font-size: 3rem; margin-bottom: 30px;">Will you marry me?</h1>
+            <button class="marry-btn" onclick="celebrate()">Yes, I will!</button>
+        </div>
+    </section>
+
+    <script>
+        // Start Experience & Music
+        function startExperience() {
+            document.getElementById('loader').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('loader').style.display = 'none';
+            }, 1000);
+            
+            // Play Music
+            const iframe = document.getElementById('youtube-audio');
+            iframe.src += "&autoplay=1";
+        }
+
+        // Colorful Heart Background Animation
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        let hearts = [];
+        class Heart {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = canvas.height + 100;
+                this.size = Math.random() * 15 + 5;
+                this.speed = Math.random() * 2 + 1;
+                this.color = `hsla(${Math.random() * 360}, 70%, 70%, 0.6)`;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.moveTo(this.x, this.y);
+                ctx.bezierCurveTo(this.x - this.size, this.y - this.size, this.x - this.size * 2, this.y + this.size / 3, this.x, this.y + this.size);
+                ctx.bezierCurveTo(this.x + this.size * 2, this.y + this.size / 3, this.x + this.size, this.y - this.size, this.x, this.y);
+                ctx.fill();
+            }
+            update() { this.y -= this.speed; }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (hearts.length < 50) hearts.push(new Heart());
+            hearts.forEach((h, i) => {
+                h.draw();
+                h.update();
+                if (h.y < -50) hearts.splice(i, 1);
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Final Celebration
+        function celebrate() {
+            confetti({
+                particleCount: 200,
+                spread: 100,
+                origin: { y: 0.6 },
+                colors: ['#ff4d6d', '#ffffff', '#ffd700']
+            });
+            alert("Thank You For Accepting Me. My Heart ❤️🫂💝");
+        }
+
+        // Adjust canvas on resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html></head>
 <body>
 
     <div id="loader">
